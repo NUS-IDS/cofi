@@ -52,10 +52,20 @@ directory and support many tasks in the project.
 It is possible to set up a development environment via Docker containers and
 environment variables.
 
+```sh
+> docker-compose up -d
+```
+
+This will spin-off a fresh instance of the data warehouse. Configuration
+parameters should be tweaked in the environment file `.env` which should be
+based on `.env-dev`. After successful container initialization, you will find
+the database available in `$AGENS_PORT` and the Airflow UI in `$AIRFLOW_PORT`.
+The latter can be accessed from the browser.
+
 `docker-compose.yml`
 > This spins up the required Docker containers for this project.
 
-`.env-deploy`
+`.env-dev`
 > Environment variables. For local deployment, the recommendation is to copy
 > this file to `.env` and tweak as required while maintaining an authoritative
 > environment file.

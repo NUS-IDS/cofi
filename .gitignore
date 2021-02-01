@@ -1,0 +1,16 @@
+# dev
+.env
+.env-deploy*
+data
+!src/agens/data
+!src/airflow/test/data
+tmp
+
+# python scaffolding
+*.egg
+*.egg-info
+*__pycache__
+*.ipynb_checkpoints
+
+# macos scaffolding
+*.DS_Store

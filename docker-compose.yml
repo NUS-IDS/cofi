@@ -1,0 +1,56 @@
+version: "2.4"
+secrets:
+    env:
+        file: ./.env
+services:
+    airflow:
+        image: apache/airflow
+        container_name: wifi_airflow
+        user: airflow:999
+        depends_on:
+            - agens
+        command: ["bash", "/docker-entrypoint.sh"]
+        volumes:
+            - ./src/airflow/docker-entrypoint.sh:/docker-entrypoint.sh
+            - ./src/airflow/dags:/opt/airflow/dags
+            - ./src/airflow/requirements.txt:/requirements.txt
+            - ${HOST_DATA}:/opt/airflow/data
+        environment:
+            - AIRFLOW_CONN_WIFIDB=postgres://agens:${AGENS_PW}@wifi_db:5432/wifidb
+            - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgres://${AGENS_AIRFLOW_USER}:${AGENS_AIRFLOW_PW}@wifi_db:5432/airflowdb
+            - AIRFLOW__CORE__EXECUTOR=${AIRFLOW__CORE__EXECUTOR}
+            - AIRFLOW__CORE__DAGBAG_IMPORT_TIMEOUT=300
+            - AIRFLOW__CORE__LOAD_EXAMPLES=False
+            - AIRFLOW__WEBSERVER__DAG_DEFAULT_VIEW=graph
+            - HOST_RAW=${HOST_RAW}
+            - HOST_IMPORT=${HOST_IMPORT}
+        ports:
+            - ${AIRFLOW_PORT}:8080
+        tty: true
+        cpus: 20
+        cpuset: 1-20
+        mem_limit: 100Gb
+        stdin_open: true
+        restart: always
+        secrets:
+            - env
+    agens:
+        container_name: wifi_db
+        build: ./src/agens
+        ports:
+            - ${AGENS_PORT}:5432
+        volumes:
+            - ${HOST_DATA}/${HOST_IMPORT}:/home/agens/import:rw
+            - ${AGENS_HOST_DATA}:/home/agens/data
+            - ./src/agens/data:/home/agens/userdata
+        environment:
+            - POSTGRES_INITDB_ARGS="--auth=md5"
+        tty: true
+        cpus: 20
+        cpuset: 1-20
+        mem_limit: 100Gb
+        stdin_open: true
+        stdin_open: true
+        restart: always
+        secrets:
+            - env

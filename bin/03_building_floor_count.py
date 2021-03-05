@@ -8,11 +8,17 @@
 # classified as primary according to the heuristics in
 # ./user_mac_classification.py. Second, it keeps only stationary sessions (ie.
 # sessions that last for more than 10 minutes).
+#
+# The program took about 6 minutes to complete in a table with 90k userids and
+# 13 million sessions. The warehouse was hosted in a server running with Intel
+# Xeon E5 v4 2.20GHz with 40 CPU cores and 500Gb of total memory. The warehouse
+# was deployed via Docker containers, only 20 CPU cores and 100Gb of memory
+# were made available to it.
 
 import logging
 import argparse
-from pathlib import Path
-from __init__ import init_db_engine, resolve_args
+from sqlalchemy import create_engine
+from __init__ import resolve_args
 
 
 def create_timestamp_str(column, interval):
@@ -65,23 +71,16 @@ def create_view(engine):
 
 def main(args):
 
-    engine = init_db_engine()
+    engine = create_engine(args.wifi_conn)
     logging.info(f"Creating view.")
     create_view(engine)
+    logging.info(f"Done.")
 
 
 if __name__ == "__main__":
 
-    here = Path(__file__)
     cli = argparse.ArgumentParser(
         description="Create building-floor session count materialized view."
-    )
-    cli.add_argument(
-        "-e",
-        "--env-file",
-        default=(here / "../../../.env"),
-        metavar="",
-        help="environment file with database connection settings.",
     )
     args = resolve_args(cli)
     main(args)

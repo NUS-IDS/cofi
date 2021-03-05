@@ -14,27 +14,29 @@ import sys
 import logging
 import argparse
 from pathlib import Path
-from sqlalchemy import create_engine
 from dotenv import load_dotenv, find_dotenv
 
 
-def init_db_engine():
-    """ Initializes a DB engine using environment variables. """
-
-    WIFI_CONN = (
-        f"postgres://"
-        + f"{os.getenv('WIFI_USER')}:{os.getenv('WIFI_PW')}"
-        + f"@0.0.0.0:{os.getenv('AGENS_PORT')}/wifidb"
-    )
-    logging.info(f"Database connection: {WIFI_CONN}")
-
-    engine = create_engine(WIFI_CONN)
-
-    return engine
-
-
-def resolve_args(cli):
+def resolve_args(cli, with_env=True, with_verbose=True):
     """ Resolve CLI args, load env variables and adjust log. """
+
+    if with_env:
+        here = Path(__file__)
+        cli.add_argument(
+            "-e",
+            "--env-file",
+            default=(here / "../../.env"),
+            metavar="",
+            help=f"environment file with database connection settings (default={(here / '../../.env').resolve()})",
+        )
+
+    if with_verbose:
+        cli.add_argument(
+            "-v",
+            "--verbose",
+            action="store_true",
+            help="log additional SQLAlchemy information",
+        )
 
     args = cli.parse_args()
 
@@ -42,6 +44,12 @@ def resolve_args(cli):
         args.env_file = Path(args.env_file).resolve()
 
     load_dotenv(f"{args.env_file}")
+
+    args.wifi_conn = (
+        f"postgresql://"
+        + f"{os.getenv('WIFI_USER')}:{os.getenv('WIFI_PW')}"
+        + f"@0.0.0.0:{os.getenv('AGENS_PORT')}/wifidb"
+    )
 
     handlers = []
     handlers.append(logging.StreamHandler(sys.stdout))
@@ -57,6 +65,8 @@ def resolve_args(cli):
         style="{",
         handlers=handlers,
     )
-    logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
+
+    if args.verbose:
+        logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
 
     return args

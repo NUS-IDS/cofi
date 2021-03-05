@@ -28,7 +28,8 @@
 import logging
 import argparse
 from pathlib import Path
-from __init__ import init_db_engine, resolve_args
+from sqlalchemy import create_engine
+from __init__ import resolve_args
 
 
 def create_dimension_table(engine):
@@ -166,9 +167,9 @@ def classify_as_main(engine):
 
 def main(args):
 
-    engine = init_db_engine()
+    engine = create_engine(args.wifi_conn)
 
-    if args.create_table:
+    if args.force:
         logging.info(
             "Creating dimension.userid_mac and inserting new userid-mac pairs."
         )
@@ -183,20 +184,12 @@ def main(args):
 
 if __name__ == "__main__":
 
-    here = Path(__file__)
     cli = argparse.ArgumentParser(description="Classify user-mac pairs.")
     cli.add_argument(
-        "-c",
-        "--create-table",
+        "-f",
+        "--force",
         action="store_true",
-        help="create dimension table and insert new userid-mac pairs, otherwise just update.",
-    )
-    cli.add_argument(
-        "-e",
-        "--env-file",
-        default=(here / "../../../.env"),
-        metavar="",
-        help="environment file with database connection settings.",
+        help="Re-create dimension table and insert new userid-mac pairs, otherwise just update.",
     )
     args = resolve_args(cli)
     main(args)

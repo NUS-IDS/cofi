@@ -14,14 +14,20 @@
 # building pair. It also does not mean that the individual was in the building
 # for the whole period, the individual could have left the university and back
 # connecting always from the same building.
+#
+# The program took about 2 minutes to complete in a table with 90k userids and
+# 13 million sessions. The warehouse was hosted in a server running with Intel
+# Xeon E5 v4 2.20GHz with 40 CPU cores and 500Gb of total memory. The warehouse
+# was deployed via Docker containers, only 20 CPU cores and 100Gb of memory
+# were made available to it.
 
 import logging
 import argparse
-from pathlib import Path
-from __init__ import init_db_engine, resolve_args
+from sqlalchemy import create_engine
+from __init__ import resolve_args
 
 
-def create_transition_list(engine):
+def create_view(engine):
 
     with engine.begin() as conn:
         conn.execute(
@@ -74,21 +80,14 @@ def create_transition_list(engine):
 
 def main(args):
 
-    engine = init_db_engine()
+    engine = create_engine(args.wifi_conn)
     logging.info("Creating the transition list.")
-    create_transition_list(engine)
+    create_view(engine)
+    logging.info("Done.")
 
 
 if __name__ == "__main__":
 
-    here = Path(__file__)
     cli = argparse.ArgumentParser(description="Creates the transition list.")
-    cli.add_argument(
-        "-e",
-        "--env-file",
-        default=(here / "../../../.env"),
-        metavar="",
-        help="environment file with database connection settings.",
-    )
     args = resolve_args(cli)
     main(args)

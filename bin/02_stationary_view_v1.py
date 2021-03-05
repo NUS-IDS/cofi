@@ -1,32 +1,32 @@
 #!/bin/python
 #
-# STATIONARY SESSIONS VIEW
-# ========================
+# STATIONARY SESSIONS VIEW V1
+# ===========================
 #
 # This executable computes a materialized view of the facts table with only
 # stationary sessions.
 #
 # Stationary sessions are those sessions that: (i) lasted for at least 10 minutes;
 # (ii) were completed by a userid-mac pair which was classified as main (or
-# primary); and (iii) do not have a duplicate userid-session start time. In
-# addition to that there is a considerable amount of overlapping sessions in
-# the facts table (over 20 percent) table need to be disentangled. To
-# disentangle those sessions we bring the session end time of an overlapping
-# session back to 1 second before the start of the next session.
+# primary)
+#
+# We merge adjacent sessions that take place in the same AP within 10 minutes
+# of each other. Sessions that take place in the same AP within 10 minutes of
+# each other but are interspersed by sessions taking places in other APs are
+# not merged, since they are not by definition adjacent.
+#
+# There is a considerable amount of overlapping sessions in the facts table
+# (over 20 percent). To disentangle those sessions we bring the session end
+# time of an overlapping session back to 1 second before the start of the next
+# session. If sessions start at the same time we arbitrarily delete one of them.
 
 import logging
 import argparse
-from pathlib import Path
-from __init__ import init_db_engine, resolve_args
+from sqlalchemy import create_engine
+from __init__ import resolve_args
 
 
-def create_stationary_session(engine):
-    """Create a materialized view of stationary sessions.
-
-    Stationary sessions are those sessions that: (i) lasted for at least 10 minutes;
-    (ii) were completed by a userid-mac pair which was classified as main (or
-    primary); and (iii) do not have a duplicate userid-mac-session_start entry.
-    """
+def create_view(engine):
 
     with engine.begin() as conn:
         conn.execute(
@@ -160,22 +160,13 @@ def create_stationary_session(engine):
 
 def main(args):
 
-    engine = init_db_engine()
-
+    engine = create_engine(args.wifi_conn)
     logging.info("Creating materialized view of stationary sessions.")
-    create_stationary_session(engine)
+    create_view(engine)
 
 
 if __name__ == "__main__":
 
-    here = Path(__file__)
     cli = argparse.ArgumentParser(description="Create the stationary sessions view.")
-    cli.add_argument(
-        "-e",
-        "--env-file",
-        default=(here / "../../../.env"),
-        metavar="",
-        help="environment file with database connection settings.",
-    )
     args = resolve_args(cli)
     main(args)

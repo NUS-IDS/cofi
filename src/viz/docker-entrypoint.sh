@@ -21,7 +21,7 @@ cd /app/frontend && PORT=8000 REACT_APP_MAPBOX_ACCESS_TOKEN=$MAPBOX_TOKEN pm2 st
 pm2 start --name "backend-python" python -- /app/backend-python/app.py
 
 # start backend-julia
-if [ -r /app/backend-julia/Tseir.jl/TseirServer.jl ]; then
+if [ -d /app/backend-julia/Tseir.jl/TseirServer.jl ]; then
     cd /app/backend-julia/Tseir.jl/TseirServer.jl && julia --project=. << EOF
 using Pkg
 Pkg.instantiate()

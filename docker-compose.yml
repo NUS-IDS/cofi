@@ -62,7 +62,6 @@ services:
             - ./src/viz/frontend:/app/frontend
             - ./src/viz/backend:/app/backend-python
             - /app/frontend/node_modules
-            - ${TSEIR_PATH}:/app/backend-julia/Tseir.jl
         environment:
             - CHOKIDAR_USEPOLLING=true
         secrets:

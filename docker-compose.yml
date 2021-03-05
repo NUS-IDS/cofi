@@ -25,15 +25,15 @@ services:
             - HOST_RAW=${HOST_RAW}
             - HOST_IMPORT=${HOST_IMPORT}
         ports:
-            - ${AIRFLOW_PORT}:8080
+            - 127.0.0.1:${AIRFLOW_PORT}:8080
+        secrets:
+            - env
         tty: true
         cpus: 20
         cpuset: 1-20
         mem_limit: 100Gb
         stdin_open: true
         restart: always
-        secrets:
-            - env
     agens:
         container_name: wifi_db
         build: ./src/agens
@@ -45,12 +45,32 @@ services:
             - ./src/agens/data:/home/agens/userdata
         environment:
             - POSTGRES_INITDB_ARGS="--auth=md5"
+        secrets:
+            - env
         tty: true
         cpus: 20
         cpuset: 1-20
         mem_limit: 100Gb
         stdin_open: true
-        stdin_open: true
         restart: always
+    viz:
+        container_name: wifi_viz
+        build: ./src/viz/
+        ports: 
+            - 127.0.0.1:${WEBSERVER_PORT}:80
+        volumes:
+            - ./src/viz/frontend:/app/frontend
+            - ./src/viz/backend:/app/backend-python
+            - /app/frontend/node_modules
+            - ${TSEIR_PATH}:/app/backend-julia/Tseir.jl
+        environment:
+            - CHOKIDAR_USEPOLLING=true
         secrets:
             - env
+        tty: true
+        cpus: 20
+        cpuset: 1-20
+        mem_limit: 100Gb
+        stdin_open: true
+        restart: always
+

@@ -1,16 +1,15 @@
 # Cofi: A Data Warehouse of Wi-Fi Sessions for Contact Tracing and Outbreak Investigation
 
-To be better prepared for the emergence and re-emergence of coronavirus
-epidemics, we seek to leverage on the availability of common existing digital
+![Cofi](cofi.gif)
+
+To better prepare for the emergence and re-emergence of coronavirus epidemics,
+we seek to leverage on the availability of common existing digital
 infrastructure such as the increasingly ubiquitous Wi-Fi networks that can be
 readily activated to assist in large-scale contact tracing. 
 
 This project implements an experimental data warehouse of Wi-Fi sessions for
 contact tracing and disease outbreak investigation on a large local university
 campus in Singapore.
-
-The datasets and resources, which are not freely available for academic use,
-are excluded.
 
 ## Data
 
@@ -21,6 +20,13 @@ README.md](./src/agens/data/README.md) file.
 
 ## Repository structure
 
+`docs`
+> This folder contains project documentation.
+
+`analysis`
+> Relevant analysis are included here. Each analyst is
+> alocated a sub-directory.
+
 `src`
 > Source-code to support project implementation, data wrangling, visualization
 > and analysis. More info below.
@@ -29,23 +35,30 @@ README.md](./src/agens/data/README.md) file.
 > Contains executables and routines for managing different parts of the
 > project.
 
-
 ## Source-code
 
-The source-code developed for this project is hosted in its dedicated
-directory and support many tasks in the project.
+The code is split in different parts as following:
 
-`src/airflow`
-> Contains Airflow DAGs that spin up a number of tasks for this project, such
-> as the ETL process. It also contains a requirements.txt file with python
-> dependencies that are installed when the container is created. To install new
-> dependencies, it is possible to do it interactively with `docker exec`, but
-> make sure to document it in the requirements file.
+![Sytem outline](system-outline.svg)
 
 `src/agens`
-> Contains the Dockerfile for the project's database and additional
-> configuration. It also contains prepopulated tables and more information
-> about the data.
+> Contains the data-warehouse. It includes prepopulated tables and more
+> detailed information about the data. The data-warehouse can be started with
+> the Dockerfile provided.
+
+`src/airflow`
+> Provides the ETL tasks. The tasks are defined as Airflow DAGs. Python
+> dependencies to assist with the tasks can be added to requirements.txt. The
+> dependencies are installed when the container is created. To install new
+> dependencies when the container is up, it is possible to do it interactively
+> with `docker exec`, but make sure to document it in the requirements file.
+
+`src/viz`
+> Contains the analytics application which consist of front- and backend
+> servers. The frontend application provides three different functions: crowd
+> sensing, contact tracing and disease simulator (pictured at the top). The
+> application can be started with as a Docker container using the Dockerfile
+> provided.
 
 ## Development environment
 
@@ -59,8 +72,9 @@ environment variables.
 This will spin-off a fresh instance of the data warehouse. Configuration
 parameters should be tweaked in the environment file `.env` which should be
 based on `.env-dev`. After successful container initialization, you will find
-the database available in `$AGENS_PORT` and the Airflow UI in `$AIRFLOW_PORT`.
-The latter can be accessed from the browser.
+the database available in `$AGENS_PORT`, the Airflow UI in `$AIRFLOW_PORT` and
+the frontend application in `$WEBSERVER_PORT`. Both Airflow and the
+web-application can be accessed from the browser.
 
 `docker-compose.yml`
 > This spins up the required Docker containers for this project.

@@ -156,7 +156,7 @@ RUN apt-get update \
                    --with-uuid=ossp \
                    --with-libxslt \
                    --with-libxml \
-                   --with-python3 \
+                   --with-python \
                    --with-perl \
                    --with-tcl \
                    --with-icu \

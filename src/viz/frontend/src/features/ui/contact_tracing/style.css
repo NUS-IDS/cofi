@@ -1,0 +1,33 @@
+html,
+body,
+#wrapper {
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+}
+
+.chart {
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: white;
+  shape-rendering: crispEdges;
+}
+.axis text {
+  fill: white;
+}
+
+.bar-contacted {
+  fill: #bb0000;
+}
+
+.bar-normal {
+  fill: #00ffff;
+}
+.label {
+  fill: white;
+}

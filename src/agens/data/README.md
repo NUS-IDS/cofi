@@ -33,7 +33,7 @@ The raw data preprocessing routine is located in
 routine is to pick for every unique session its latest entry in the 
 current logfile, raising errors in case there are any inconsistencies.
 
-As of version 0.5 of the database there are some issues with the raw data:
+As of version 0.6 of the database there are some issues with the raw data:
 
 * some sessions have a start time later than the end and/or the pull time, this
   seems to be caused by sessions with a start and end time within the same log
@@ -72,7 +72,7 @@ assumption.
 
 The whole ETL process is managed with Airflow.
 
-## User and Mac addresses
+## User and mac addresses
 
 The username and mac addresses are hashed according to a routine outside of our
 control. However, it is knwon that the hashing algorihtm always produces the
@@ -83,7 +83,9 @@ since we do not associate any additional information with these dimensions.
 
 ## Dates
 
-The database contains log sessions from 3rd December 2019 to 17 January 2021 inclusive, except for dates from 30th July 2020 to 26th October 2020 inclusive, and 19th November 2020.
+The database contains log sessions from 3rd December 2019 to 17 January 2021
+inclusive, except for dates from 30th July 2020 to 26th October 2020 inclusive,
+and 19th November 2020.
 
 We create a pre-populated table with dates that appear on the database with
 associated key events and information, field description follows below:
@@ -100,6 +102,7 @@ associated key events and information, field description follows below:
 > * public_holiday: whether day is a public holiday
 > * intervention: COVID-19 interventions
 > * pull_hours_missing: number of hour intervals with no recorded sessions
+> * number_of_missing_hours: number of hour intervals with no recorded sessions
 
 ## SSID
 
@@ -112,7 +115,7 @@ field description follows below:
 
 `ssid.csv`
 > * name: service set identifier (SSID) name, primary name associated with an
->    802.11 wireless local area network.
+>   802.11 wireless local area network.
 > * in_it_configuration: whether SSID belongs to IT configuration.
 > * tmp: whether SSID is temporary, missing if SSID does not belong to IT configuration.
 > * authentication type: type of authentication required to connect to the
@@ -184,4 +187,3 @@ geometry contains the following additional features:
 > * description: a building description, usually its name.
 > * lon: building centroid longitude.
 > * lat: building centroid latitude.
-> * zone: university COVID-19 zones.

@@ -31,6 +31,7 @@ CREATE EXTENSION IF NOT EXISTS postgis_tiger_geocoder;
 CREATE EXTENSION IF NOT EXISTS ogr_fdw;
 CREATE EXTENSION IF NOT EXISTS postgres_fdw;
 CREATE EXTENSION IF NOT EXISTS file_fdw;
+CREATE EXTENSION IF NOT EXISTS plpython3u;
 EOSQL
 
 # Create wifi and airflow databases

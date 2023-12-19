@@ -1,6 +1,6 @@
-# Cofi: A Data Warehouse of Wi-Fi Sessions for Contact Tracing and Outbreak Investigation
+# Co-Fi: A Data Warehouse of Wi-Fi Sessions for Contact Tracing and Outbreak Investigation
 
-![Cofi](cofi.gif)
+![Co-Fi](cofi.gif)
 
 To better prepare for the emergence and re-emergence of coronavirus epidemics,
 we seek to leverage on the availability of common existing digital
